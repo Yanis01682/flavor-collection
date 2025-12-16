@@ -41,7 +41,7 @@ export const analyzeFoodImage = async (base64Data: string, mimeType: string): Pr
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-image", // Optimized for image tasks
+      model: "gemini-2.5-flash", // Use standard flash model for multimodal analysis
       contents: {
         parts: [
           {

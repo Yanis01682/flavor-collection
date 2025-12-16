@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { Camera, Save, X, Sparkles, Loader2, Image as ImageIcon } from "lucide-react";
+import { Camera, Save, X, Sparkles, Loader2 } from "lucide-react";
 import { FoodEntry } from "../types";
 import { StarRating } from "./StarRating";
 import { analyzeFoodImage, fileToGenerativePart } from "../services/geminiService";

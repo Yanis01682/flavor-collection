@@ -26,6 +26,14 @@ const App: React.FC = () => {
     setIsAdding(false);
   };
 
+  const handleDeleteEntry = (id: string) => {
+    if (window.confirm("确定要删除这条美食记录吗？")) {
+      const updatedEntries = entries.filter(entry => entry.id !== id);
+      setEntries(updatedEntries);
+      saveEntries(updatedEntries);
+    }
+  };
+
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -114,7 +122,7 @@ const App: React.FC = () => {
 
       {/* Main Content Area */}
       <main className="flex-1 overflow-hidden relative">
-        <FoodList entries={entries} />
+        <FoodList entries={entries} onDelete={handleDeleteEntry} />
         
         {/* Floating Action Button */}
         {!isAdding && (

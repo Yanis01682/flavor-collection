@@ -1,13 +1,14 @@
 import React, { useState, useMemo } from "react";
-import { Search, MapPin, Calendar, Filter, X } from "lucide-react";
+import { Search, MapPin, Filter, X, Trash2 } from "lucide-react";
 import { FoodEntry } from "../types";
 import { StarRating } from "./StarRating";
 
 interface FoodListProps {
   entries: FoodEntry[];
+  onDelete: (id: string) => void;
 }
 
-export const FoodList: React.FC<FoodListProps> = ({ entries }) => {
+export const FoodList: React.FC<FoodListProps> = ({ entries, onDelete }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRating, setFilterRating] = useState<number | null>(null);
   const [showFilters, setShowFilters] = useState(false);
@@ -86,7 +87,7 @@ export const FoodList: React.FC<FoodListProps> = ({ entries }) => {
           </div>
         ) : (
           filteredEntries.map((entry) => (
-            <div key={entry.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col sm:flex-row">
+            <div key={entry.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col sm:flex-row relative group">
               {/* Image Section */}
               <div className="h-48 sm:h-auto sm:w-48 bg-gray-100 shrink-0 relative">
                 {entry.imageUri ? (
@@ -104,7 +105,7 @@ export const FoodList: React.FC<FoodListProps> = ({ entries }) => {
               {/* Content Section */}
               <div className="p-4 flex-1 flex flex-col justify-between">
                 <div>
-                  <div className="flex justify-between items-start mb-1">
+                  <div className="flex justify-between items-start mb-1 pr-6">
                     <h3 className="text-lg font-bold text-gray-900 line-clamp-1">{entry.name}</h3>
                     <span className="text-xs text-gray-400 whitespace-nowrap ml-2">
                         {new Date(entry.timestamp).toLocaleDateString()}
@@ -123,6 +124,18 @@ export const FoodList: React.FC<FoodListProps> = ({ entries }) => {
                   )}
                 </div>
               </div>
+
+              {/* Delete Button (Visible on hover on desktop, always distinct on mobile layout) */}
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(entry.id);
+                }}
+                className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur text-gray-400 hover:text-red-500 rounded-full shadow-sm border border-gray-100 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all"
+                title="删除记录"
+              >
+                <Trash2 size={16} />
+              </button>
             </div>
           ))
         )}

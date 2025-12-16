@@ -1,0 +1,7 @@
+{
+  "name": "Flavor Collection",
+  "description": "A personal food diary app to track meals, rate restaurants, and keep notes. Features AI-powered food recognition.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

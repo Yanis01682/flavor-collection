@@ -4,9 +4,12 @@ const STORAGE_KEY = "gourmet_log_entries";
 
 export const saveEntries = (entries: FoodEntry[]) => {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    const serialized = JSON.stringify(entries);
+    localStorage.setItem(STORAGE_KEY, serialized);
   } catch (error) {
     console.error("Failed to save to localStorage", error);
+    // 捕获 QuotaExceededError 或其他写入错误
+    alert("⚠️ 严重警告：数据保存失败！\n\n原因可能是：\n1. 手机存储空间已满\n2. 浏览器处于无痕/隐私模式\n3. 浏览器禁止了本地存储\n\n请尝试清理空间或关闭无痕模式后重试，否则数据将在退出后丢失！");
   }
 };
 
@@ -20,23 +23,43 @@ export const loadEntries = (): FoodEntry[] => {
   }
 };
 
-// 导出数据为 JSON 文件
-export const exportData = () => {
-  const data = localStorage.getItem(STORAGE_KEY);
-  if (!data) return;
-  
-  const blob = new Blob([data], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `yummy_backup_${new Date().toISOString().split('T')[0]}.json`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+export const exportData = (): boolean => {
+  try {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (!data || data === "[]") {
+      alert("没有发现任何记录，无法导出。");
+      return false;
+    }
+    
+    // 创建 Blob 对象
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    
+    // 创建临时链接并触发点击
+    const a = document.createElement("a");
+    const fileName = `FlavorCollection_Backup_${new Date().toISOString().slice(0,10)}.json`;
+    
+    a.href = url;
+    a.download = fileName;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    
+    a.click();
+    
+    // 清理
+    setTimeout(() => {
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }, 100);
+
+    return true;
+  } catch (e) {
+    console.error("Export failed", e);
+    alert(`导出失败: ${(e as Error).message}`);
+    return false;
+  }
 };
 
-// 导入数据
 export const importData = (file: File): Promise<FoodEntry[]> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -48,12 +71,13 @@ export const importData = (file: File): Promise<FoodEntry[]> => {
           saveEntries(entries);
           resolve(entries);
         } else {
-          reject(new Error("Invalid data format"));
+          reject(new Error("文件格式错误：不是有效的备份文件"));
         }
       } catch (err) {
-        reject(err);
+        reject(new Error("文件解析失败"));
       }
     };
+    reader.onerror = () => reject(new Error("读取文件失败"));
     reader.readAsText(file);
   });
 };

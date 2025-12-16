@@ -19,11 +19,10 @@ export const FoodList: React.FC<FoodListProps> = ({ entries, onDelete }) => {
         entry.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         entry.restaurant.toLowerCase().includes(searchTerm.toLowerCase());
       
-      // Exact match for rating, supporting half stars
       const matchesRating = filterRating !== null ? entry.rating === filterRating : true;
 
       return matchesSearch && matchesRating;
-    }).sort((a, b) => b.timestamp - a.timestamp); // Newest first
+    }).sort((a, b) => b.timestamp - a.timestamp);
   }, [entries, searchTerm, filterRating]);
 
   return (
@@ -49,11 +48,10 @@ export const FoodList: React.FC<FoodListProps> = ({ entries, onDelete }) => {
           </button>
         </div>
 
-        {/* Expandable Filter Panel */}
         {showFilters && (
           <div className="animate-fade-in pb-2">
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs font-bold text-gray-500 uppercase">精确评分筛选</span>
+              <span className="text-xs font-bold text-gray-500 uppercase">按评分筛选</span>
               {filterRating !== null && (
                 <button onClick={() => setFilterRating(null)} className="text-xs text-brand-600 flex items-center">
                   <X size={12} className="mr-1" /> 清除
@@ -61,7 +59,6 @@ export const FoodList: React.FC<FoodListProps> = ({ entries, onDelete }) => {
               )}
             </div>
             
-            {/* Interactive Star Rating for Filter */}
             <div className="flex flex-col items-center justify-center bg-gray-50 p-4 rounded-lg border border-gray-100">
                <StarRating 
                   rating={filterRating || 0} 
@@ -69,7 +66,7 @@ export const FoodList: React.FC<FoodListProps> = ({ entries, onDelete }) => {
                   size={32} 
                />
                <div className="mt-2 text-sm text-gray-500 font-medium">
-                  {filterRating !== null ? `${filterRating} 分` : "点击星星选择分数"}
+                  {filterRating !== null ? `${filterRating} 分` : "点击星星筛选"}
                </div>
             </div>
           </div>
@@ -88,6 +85,19 @@ export const FoodList: React.FC<FoodListProps> = ({ entries, onDelete }) => {
         ) : (
           filteredEntries.map((entry) => (
             <div key={entry.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col sm:flex-row relative group">
+              
+              {/* 删除按钮：固定在卡片右上角 */}
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(entry.id);
+                }}
+                className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur text-gray-400 hover:text-red-500 rounded-full shadow-sm border border-gray-100 z-20"
+                title="删除记录"
+              >
+                <Trash2 size={18} />
+              </button>
+
               {/* Image Section */}
               <div className="h-48 sm:h-auto sm:w-48 bg-gray-100 shrink-0 relative">
                 {entry.imageUri ? (
@@ -97,23 +107,25 @@ export const FoodList: React.FC<FoodListProps> = ({ entries, onDelete }) => {
                     <span className="text-xs">无照片</span>
                   </div>
                 )}
-                <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded-full flex items-center">
+                
+                {/* 评分展示：固定在图片左下角，加深色背景防遮挡 */}
+                <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded-full flex items-center z-10">
                    <StarRating rating={entry.rating} readOnly size={12} />
                 </div>
               </div>
 
               {/* Content Section */}
-              <div className="p-4 flex-1 flex flex-col justify-between">
-                <div>
-                  <div className="flex justify-between items-start mb-1 pr-6">
+              <div className="p-4 flex-1 flex flex-col justify-between relative">
+                <div className="pr-10"> {/* 右侧留白防止文字遮挡删除按钮 */}
+                  <div className="flex flex-col mb-1">
                     <h3 className="text-lg font-bold text-gray-900 line-clamp-1">{entry.name}</h3>
-                    <span className="text-xs text-gray-400 whitespace-nowrap ml-2">
+                    <span className="text-xs text-gray-400 mt-0.5">
                         {new Date(entry.timestamp).toLocaleDateString()}
                     </span>
                   </div>
                   
                   <div className="flex items-center text-gray-500 text-sm mb-3">
-                    <MapPin size={14} className="mr-1" />
+                    <MapPin size={14} className="mr-1 shrink-0" />
                     <span className="line-clamp-1">{entry.restaurant}</span>
                   </div>
 
@@ -124,18 +136,6 @@ export const FoodList: React.FC<FoodListProps> = ({ entries, onDelete }) => {
                   )}
                 </div>
               </div>
-
-              {/* Delete Button (Visible on hover on desktop, always distinct on mobile layout) */}
-              <button 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete(entry.id);
-                }}
-                className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur text-gray-400 hover:text-red-500 rounded-full shadow-sm border border-gray-100 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all"
-                title="删除记录"
-              >
-                <Trash2 size={16} />
-              </button>
             </div>
           ))
         )}

@@ -23,6 +23,13 @@
     /* Env */
     "types": ["node", "vite/client"]
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": [
+    "index.tsx",
+    "App.tsx",
+    "components/**/*.tsx",
+    "services/**/*.ts",
+    "types.ts",
+    "vite.config.ts"
+  ],
   "exclude": ["node_modules", "dist"]
 }

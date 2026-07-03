@@ -1,20 +1,51 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Flavor Collection
 
-# Run and deploy your AI Studio app
+Flavor Collection is a small personal prototype for keeping food and flavor notes. It lets you save food entries locally, attach images, rate dishes, export/import your data, and optionally use Gemini to infer a dish name and short note from an uploaded image.
 
-This contains everything you need to run your app locally.
+This project is still a work in progress. It is kept public as a lightweight experiment rather than a polished product.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1t5GOiqxmQs7d3gVi9Ozyox--vAbM7_u6
+## Features
+
+- Add and browse food records
+- Star ratings and short notes
+- Local browser storage
+- JSON export and import for backups
+- Optional Gemini image analysis for dish names and descriptions
+
+## Tech Stack
+
+- React
+- TypeScript
+- Vite
+- `@google/genai`
+- lucide-react
 
 ## Run Locally
 
-**Prerequisites:**  Node.js
+Install dependencies:
 
+```bash
+npm install
+```
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+Create `.env.local` if you want to use Gemini image analysis:
+
+```text
+API_KEY=your_gemini_api_key
+```
+
+Start the dev server:
+
+```bash
+npm run dev
+```
+
+Build:
+
+```bash
+npm run build
+```
+
+## Notes
+
+Data is stored locally in the browser. Export a backup before clearing browser data.
